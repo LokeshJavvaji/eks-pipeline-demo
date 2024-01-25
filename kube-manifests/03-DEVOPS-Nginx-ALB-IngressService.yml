@@ -26,7 +26,7 @@ metadata:
     # External DNS - For creating a Record Set in Route53
     external-dns.alpha.kubernetes.io/hostname: kubedemo.loke19.shop     
 spec:
-  ingressClassName: my-aws-ingress-class # Ingress Class
+  ingressClassName: alb # Ingress Class
   rules:
     - host: kubedemo.loke19.shop
       http:
