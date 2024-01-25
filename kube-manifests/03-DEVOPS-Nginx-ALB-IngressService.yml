@@ -7,7 +7,9 @@ metadata:
     app: eks-devops
   annotations:
     # Ingress Core Settings  
-    kubernetes.io/ingress.class: "alb"
+    #kubernetes.io/ingress.class: "alb"
+    # Load Balancer Name
+    alb.ingress.kubernetes.io/load-balancer-name: externaldns-ingress
     alb.ingress.kubernetes.io/scheme: internet-facing
     # Health Check Settings
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP 
@@ -30,16 +32,9 @@ spec:
   rules:
     - host: kubedemo.loke19.shop
       http:
-        paths:
-          - pathType: Prefix
-            path: "/" # SSL Redirect Setting
-            backend:
-              service:
-                name: ssl-redirect
-                port:
-                  number: 443            
-          - pathType: Prefix
-            path: "/"
+        paths:           
+          - path: /app1
+            pathType: Prefix
             backend:
               service:
                 name: eks-devops-nodeport-service
