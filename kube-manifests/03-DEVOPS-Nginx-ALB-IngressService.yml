@@ -1,5 +1,5 @@
 # Annotations Reference:  https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/ingress/annotation/
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: eks-devops-ingress-service
@@ -19,24 +19,30 @@ metadata:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
     ## SSL Settings
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:180789647333:certificate/9f042b5d-86fd-4fad-96d0-c81c5abc71e1
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:305637245863:certificate/8986b4fe-0bd4-4f8c-85f9-1f93e901e1fe
     #alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01 #Optional (Picks default if not used)    
     # SSL Redirect Setting
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'   
     # External DNS - For creating a Record Set in Route53
-    external-dns.alpha.kubernetes.io/hostname: devops.loke19.shop      
+    external-dns.alpha.kubernetes.io/hostname: kubedemo.loke19.shop     
 spec:
   ingressClassName: my-aws-ingress-class # Ingress Class
   rules:
-    - http:
+    - host: kubedemo.loke19.shop
+      http:
         paths:
-          - path: /* # SSL Redirect Setting
+          - pathType: Prefix
+            path: "/" # SSL Redirect Setting
             backend:
-              serviceName: ssl-redirect
-              servicePort: use-annotation            
-          - path: /*
+              service:
+                name: ssl-redirect
+                port:
+                  number: use-annotation            
+          - pathType: Prefix
+            path: "/"
             backend:
-              serviceName: eks-devops-nodeport-service
-              servicePort: 80                                   
-# Important Note-1: In path based routing order is very important, if we are going to use  "/*", try to use it at the end of all rules.         
-
+              service:
+                name: eks-devops-nodeport-service
+                port:
+                  number: 80                                   
+# Important Note-1: In path-based routing, order is very important. If using "/*", place it at the end of all rules.
