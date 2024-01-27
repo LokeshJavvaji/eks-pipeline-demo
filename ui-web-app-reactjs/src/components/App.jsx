@@ -45,7 +45,7 @@ const App = () => {
         <div className="tc ttc">Sample Microservice calls</div>
       </header>
       <div className="pt4 pb1 tc">
-        Go save the world with JavaScript
+        Microservices Container Orchestration with Kubernetes
         <br/> <br/> <br/>
         <button name="shoe/shoes" onClick={handleApiCall} style={{margin:'0px 10px'}}>Shoes</button>
         <button name="offer/offers" onClick={handleApiCall} style={{margin:'0px 10px'}}>Offers</button>
