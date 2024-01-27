@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'  
+import React, {useState, useEffect} from 'react'
 
 const App = () => {
 
@@ -6,17 +6,27 @@ const App = () => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [displayData, setDisplayData] = useState({url:''})
-  const [details, setDetails] = useState({});
-  let [url, setUrl] = useState('');
+  const [details, setDetails] = useState('');
 
+  
+  const getUserGeolocationDetails = () => {
+    fetch("/myip")
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setDetails(data.url)
+        });
+  }
 
+  useEffect(()=>{
+    getUserGeolocationDetails()
+  },[])
 
   const handleApiCall = async (e) => {
-    let url = 'http://34.229.207.242:9999/'+e.target.name
-    console.log(details.IPv4)
-    console.log(url)
+    // const url = 'http://localhost:9999/'+e.target.name;
+    let url = 'http://'+details+':32470/'+e.target.name
+
     displayData.url=url
-    if(url){
     let options = {}
       try {
           setLoading(true)
@@ -32,7 +42,6 @@ const App = () => {
       finally {
           setLoading(false)
       }
-    }
   }
 
 
@@ -45,7 +54,7 @@ const App = () => {
         <div className="tc ttc">Sample Microservice calls</div>
       </header>
       <div className="pt4 pb1 tc">
-        Microservices Container Orchestration with Kubernetes
+        Go save the world with JavaScript
         <br/> <br/> <br/>
         <button name="shoe/shoes" onClick={handleApiCall} style={{margin:'0px 10px'}}>Shoes</button>
         <button name="offer/offers" onClick={handleApiCall} style={{margin:'0px 10px'}}>Offers</button>
@@ -75,4 +84,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App

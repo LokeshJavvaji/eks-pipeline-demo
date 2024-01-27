@@ -3,9 +3,9 @@ const path = require('path')
 const app = express()
 const request = require('request');
 
-var backendApiUrl= process.env.BACKEND_API_URL || "http://zuul-api-gateway:9999";
+var backendApiUrl=''
 
-/*function getBackendApiUrl(){
+function getBackendApiUrl(){
     if(!backendApiUrl){
         request('https://geolocation-db.com/json/344ec440-6bfc-11eb-a0c0-b5dee9e67313', { json: true }, (err, res, body) => {
             if (err) { return console.log(err); }
@@ -17,8 +17,8 @@ var backendApiUrl= process.env.BACKEND_API_URL || "http://zuul-api-gateway:9999"
         });
     }
 }
-getBackendApiUrl() 
-*/
+getBackendApiUrl()
+
 
 app.use(express.static(path.join(__dirname, 'dist')))
 
