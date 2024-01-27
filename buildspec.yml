@@ -9,7 +9,12 @@ phases:
         - TAG="$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
         # Update Image tag in our Kubernetes Deployment Manifest        
         - echo "Update Image tag in kube-manifest..."
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' kube-manifests/01-DEVOPS-Nginx-Deployment.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY1_URI:$TAG"'@' kube-manifests/cart.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY2_URI:$TAG"'@' kube-manifests/frontend.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY3_URI:$TAG"'@' kube-manifests/offers.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY4_URI:$TAG"'@' kube-manifests/shoes.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY5_URI:$TAG"'@' kube-manifests/wishlist.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY6_URI:$TAG"'@' kube-manifests/zuul.yml
         - echo "Verify Docker Version..."
         - docker --version
 
@@ -18,7 +23,7 @@ phases:
         - aws --version
         # Login to ECR Registry for docker to push the image to ECR Repository
         - echo "Login in to Amazon ECR..."
-        - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+        - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY1_URI
         # Update Kube config Home Directory
         - export KUBECONFIG=$HOME/.kube/config
   build:
@@ -26,14 +31,24 @@ phases:
       # Build Docker Image
       - echo "Build started on `date`"
       - echo "Building the Docker image..."
-      - docker build --tag $REPOSITORY_URI:$TAG .
+      - docker build --tag $REPOSITORY1_URI:$TAG cart-microservice-nodejs/ 
+      - docker build --tag $REPOSITORY2_URI:$TAG ui-web-app-reactjs/
+      - docker build --tag $REPOSITORY3_URI:$TAG offers-microservice-spring-boot/ 
+      - docker build --tag $REPOSITORY4_URI:$TAG shoes-microservice-spring-boot/ 
+      - docker build --tag $REPOSITORY5_URI:$TAG wishlist-microservice-python/ 
+      - docker build --tag $REPOSITORY6_URI:$TAG zuul-api-gateway/ 
   post_build:
     commands:
       # Push Docker Image to ECR Repository
       - echo "Build completed on `date`"
       - echo "Pushing the Docker image to ECR Repository"
-      - docker push $REPOSITORY_URI:$TAG
-      - echo "Docker Image Push to ECR Completed -  $REPOSITORY_URI:$TAG"    
+      - docker push $REPOSITORY1_URI:$TAG
+      - docker push $REPOSITORY2_URI:$TAG
+      - docker push $REPOSITORY3_URI:$TAG
+      - docker push $REPOSITORY4_URI:$TAG
+      - docker push $REPOSITORY5_URI:$TAG
+      - docker push $REPOSITORY6_URI:$TAG
+      #- echo "Docker Image Push to ECR Completed -  $REPOSITORY_URI:$TAG"    
       # Extracting AWS Credential Information using STS Assume Role for kubectl
       - echo "Setting Environment Variables related to AWS CLI for Kube Config Setup"          
       - CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
@@ -45,12 +60,13 @@ phases:
       - echo "Update Kube Config"      
       - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       - kubectl version --client
+
       # Apply changes to our Application using kubectl
       - echo "Apply changes to kube manifests"            
       - kubectl apply -f kube-manifests/
       - echo "Completed applying changes to Kubernetes Objects"           
       # Create Artifacts which we can use if we want to continue our pipeline for other stages
-      - printf '[{"name":"01-DEVOPS-Nginx-Deployment.yml","imageUri":"%s"}]' $REPOSITORY_URI:$TAG > build.json
+      #- printf '[{"name":"01-DEVOPS-Nginx-Deployment.yml","imageUri":"%s"}]' $REPOSITORY1_URI:$TAG > build.json
       # Additional Commands to view your credentials      
       #- echo "Credentials Value is..  ${CREDENTIALS}"      
       #- echo "AWS_ACCESS_KEY_ID...  ${AWS_ACCESS_KEY_ID}"            
@@ -60,5 +76,5 @@ phases:
       #- echo "EKS_CLUSTER_NAME...  $EKS_CLUSTER_NAME"             
 artifacts:
   files: 
-    - build.json   
+    #- build.json   
     - kube-manifests/*
