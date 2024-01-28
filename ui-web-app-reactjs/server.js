@@ -3,7 +3,7 @@ const path = require('path')
 const app = express()
 const request = require('request');
 
-var backendApiUrl='http://zuul-api-gateway.default:9999'
+var backendApiUrl='http://zuul-api-gateway.default:9999/'
 
 
 
