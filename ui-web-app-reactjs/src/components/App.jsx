@@ -9,6 +9,23 @@ const App = () => {
   const [details, setDetails] = useState('');
 
   
+  const getUserGeolocationDetails = () => {
+    fetch("/myip")
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setDetails(data.url)
+        });
+  }
+
+  useEffect(()=>{
+    getUserGeolocationDetails()
+  },[])
+
+  const handleApiCall = async (e) => {
+    // const url = 'http://localhost:9999/'+e.target.name;
+  let url = details + e.target.name;
+  displayData.url = url;
   const shoesData = [
     {
       id: 1,
@@ -38,7 +55,7 @@ const App = () => {
       price: 149.99,
       color: 'Grey',
     },
-  ]
+  ];
 
   const offersData = [
     {
@@ -53,7 +70,7 @@ const App = () => {
       discount: 'Buy one, get one 50% off',
       expiryDate: '2024-08-15',
     },
-  ]
+  ];
 
   const cartData = [
     {
@@ -64,7 +81,7 @@ const App = () => {
       color: 'Blue',
       quantity: 1,
     },
-  ]
+  ];
 
   const wishlistData = [
     {
@@ -82,23 +99,40 @@ const App = () => {
       color: 'Red',
     },
   ]
+  let options = {};
 
-  const handleButtonClick = (category) => {
-    switch (category) {
-      case 'shoes':
-        setDisplayedDetails(JSON.stringify(shoesData, null, 2));
+  try {
+    setLoading(true);
+
+    // Handle different cases based on the button's name
+    switch (e.target.name) {
+      case 'shoe/shoes':
+        setResponse(shoesData);
+        setError(null);
         break;
-      case 'offers':
-        setDisplayedDetails(JSON.stringify(offersData, null, 2));
+      case 'offer/offers':
+        setResponse(offersData);
+        setError(null);
         break;
       case 'cart':
-        setDisplayedDetails(JSON.stringify(cartData, null, 2));
+        setResponse(cartData);
+        setError(null);
         break;
       case 'wishlist':
-        setDisplayedDetails(JSON.stringify(wishlistData, null, 2));
+        setResponse(wishlistData);
+        setError(null);
         break;
       default:
-        setDisplayedDetails('');
+        // Handle default case or make an actual API call if needed
+        break;
+    }
+    }
+     catch (err) {
+      setLoading(false);
+      setError(err);
+      setResponse(null);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -114,10 +148,10 @@ const App = () => {
       <div className="pt4 pb1 tc">
         Go save the world with JavaScript
         <br/> <br/> <br/>
-        <button name="shoe/shoes" onClick={() => handleButtonClick('shoes')} style={{margin:'0px 10px'}}>Shoes</button>
-        <button name="offer/offers" onClick={() => handleButtonClick('offers')} style={{margin:'0px 10px'}}>Offers</button>
-        <button name="cart" onClick={() => handleButtonClick('cart')} style={{margin:'0px 10px'}}>Cart</button>
-        <button name="wishlist" onClick={() => handleButtonClick('wishlist')} style={{margin:'0px 10px'}}>Wishlist</button>
+        <button name="shoe/shoes" onClick={handleApiCall} style={{margin:'0px 10px'}}>Shoes</button>
+        <button name="offer/offers" onClick={handleApiCall} style={{margin:'0px 10px'}}>Offers</button>
+        <button name="cart" onClick={handleApiCall} style={{margin:'0px 10px'}}>Cart</button>
+        <button name="wishlist" onClick={handleApiCall} style={{margin:'0px 10px'}}>Wishlist</button>
         <br/> <br/> <br/>
         <div>
           {response&&<>
@@ -131,7 +165,7 @@ const App = () => {
         <div>
         <h2>Displayed Details:</h2>
         <pre>{displayedDetails}</pre>
-        </div>
+      </div>
       </div>
     </>
   )
