@@ -1,17 +1,33 @@
-const express = require('express');
-const path = require('path');
-const app = express();
+const express = require('express')
+const path = require('path')
+const app = express()
+const request = require('request');
 
-// Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, 'build')));
+var backendApiUrl='http://zuul-api-gateway.default:9999'
 
-// The "catchall" handler: for any request that doesn't
-// match one above, send back the React index.html file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+
+
+
+app.use(express.static(path.join(__dirname, 'dist')))
+
+app.get('/ping', (req, res) => {
+  return res.send('pong')
+})
+
+app.get('/myip', (req, res) => {
+    // return res.send(''+backendApiUrl)
+    return res.json({ url: ''+backendApiUrl });
+})
+
+
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`UI App Started...`);
+    console.log(`Node Server is running on port ${PORT}.`);
 });
