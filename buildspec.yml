@@ -9,12 +9,10 @@ phases:
         - TAG="$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
         # Update Image tag in our Kubernetes Deployment Manifest        
         - echo "Update Image tag in kube-manifest..."
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY1_URI:$TAG"'@' kube-manifests/cart.yml
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY2_URI:$TAG"'@' kube-manifests/frontend.yml
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY3_URI:$TAG"'@' kube-manifests/offers.yml
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY4_URI:$TAG"'@' kube-manifests/shoes.yml
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY5_URI:$TAG"'@' kube-manifests/wishlist.yml
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY6_URI:$TAG"'@' kube-manifests/zuul.yml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY1_URI:$TAG"'@' kube-manifests/auth-deployment.yaml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY2_URI:$TAG"'@' kube-manifests/react-ui-deployment.yaml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY3_URI:$TAG"'@' kube-manifests/tasks-deployment.yaml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY4_URI:$TAG"'@' kube-manifests/users-deploymen.yaml
         - echo "Verify Docker Version..."
         - docker --version
 
@@ -31,12 +29,10 @@ phases:
       # Build Docker Image
       - echo "Build started on `date`"
       - echo "Building the Docker image..."
-      - docker build --tag $REPOSITORY1_URI:$TAG cart-microservice-nodejs/ 
-      - docker build --tag $REPOSITORY2_URI:$TAG ui-web-app-reactjs/
-      - docker build --tag $REPOSITORY3_URI:$TAG offers-microservice-spring-boot/ 
-      - docker build --tag $REPOSITORY4_URI:$TAG shoes-microservice-spring-boot/ 
-      - docker build --tag $REPOSITORY5_URI:$TAG wishlist-microservice-python/ 
-      - docker build --tag $REPOSITORY6_URI:$TAG zuul-api-gateway/ 
+      - docker build --tag $REPOSITORY1_URI:$TAG auth-api/ 
+      - docker build --tag $REPOSITORY2_URI:$TAG react_ui/
+      - docker build --tag $REPOSITORY3_URI:$TAG tasks/ 
+      - docker build --tag $REPOSITORY4_URI:$TAG users-api/ 
   post_build:
     commands:
       # Push Docker Image to ECR Repository
@@ -46,8 +42,6 @@ phases:
       - docker push $REPOSITORY2_URI:$TAG
       - docker push $REPOSITORY3_URI:$TAG
       - docker push $REPOSITORY4_URI:$TAG
-      - docker push $REPOSITORY5_URI:$TAG
-      - docker push $REPOSITORY6_URI:$TAG
       #- echo "Docker Image Push to ECR Completed -  $REPOSITORY_URI:$TAG"    
       # Extracting AWS Credential Information using STS Assume Role for kubectl
       - echo "Setting Environment Variables related to AWS CLI for Kube Config Setup"          
@@ -63,7 +57,7 @@ phases:
 
       # Apply changes to our Application using kubectl
       - echo "Apply changes to kube manifests"            
-      - kubectl apply -f kube-manifests/
+      - kubectl apply -f kubernetes-manifests/
       - echo "Completed applying changes to Kubernetes Objects"           
       # Create Artifacts which we can use if we want to continue our pipeline for other stages
       #- printf '[{"name":"01-DEVOPS-Nginx-Deployment.yml","imageUri":"%s"}]' $REPOSITORY1_URI:$TAG > build.json
