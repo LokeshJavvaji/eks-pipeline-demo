@@ -12,7 +12,7 @@ phases:
         - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY1_URI:$TAG"'@' kubernetes-manifests/auth-deployment.yaml
         - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY2_URI:$TAG"'@' kubernetes-manifests/react-ui-deployment.yaml
         - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY3_URI:$TAG"'@' kubernetes-manifests/tasks-deployment.yaml
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY4_URI:$TAG"'@' kubernetes-manifests/users-deploymen.yaml
+        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY4_URI:$TAG"'@' kubernetes-manifests/users-deployment.yaml
         - echo "Verify Docker Version..."
         - docker --version
 
