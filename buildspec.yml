@@ -31,7 +31,7 @@ phases:
       - echo "Building the Docker image..."
       - docker build --tag $REPOSITORY1_URI:$TAG auth-api/ 
       - docker build --tag $REPOSITORY2_URI:$TAG react_ui/
-      - docker build --tag $REPOSITORY3_URI:$TAG tasks/ 
+      - docker build --tag $REPOSITORY3_URI:$TAG tasks-api/ 
       - docker build --tag $REPOSITORY4_URI:$TAG users-api/ 
   post_build:
     commands:
