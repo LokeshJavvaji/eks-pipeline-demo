@@ -102,6 +102,8 @@ const App = () => {
     }
   }
 
+
+
   return (
     <>
       <header className="pv5 bg-gold black-80">
@@ -115,7 +117,7 @@ const App = () => {
         <button name="shoe/shoes" onClick={() => handleButtonClick('shoes')} style={{margin:'0px 10px'}}>Shoes</button>
         <button name="offer/offers" onClick={() => handleButtonClick('offers')} style={{margin:'0px 10px'}}>Offers</button>
         <button name="cart" onClick={() => handleButtonClick('cart')} style={{margin:'0px 10px'}}>Cart</button>
-        <button name="wishlist" onClick={() => handleButtonClick('wishlist')}} style={{margin:'0px 10px'}}>Wishlist</button>
+        <button name="wishlist" onClick={() => handleButtonClick('wishlist')} style={{margin:'0px 10px'}}>Wishlist</button>
         <br/> <br/> <br/>
         <div>
           {response&&<>
