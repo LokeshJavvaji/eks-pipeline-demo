@@ -102,8 +102,6 @@ const App = () => {
     }
   }
 
-
-
   return (
     <>
       <header className="pv5 bg-gold black-80">
