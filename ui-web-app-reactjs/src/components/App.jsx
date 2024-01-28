@@ -24,116 +24,24 @@ const App = () => {
 
   const handleApiCall = async (e) => {
     // const url = 'http://localhost:9999/'+e.target.name;
-  let url = details + e.target.name;
-  displayData.url = url;
-  const shoesData = [
-    {
-      id: 1,
-      brand: 'Nike',
-      model: 'Air Max',
-      price: 99.99,
-      color: 'Black',
-    },
-    {
-      id: 2,
-      brand: 'Adidas',
-      model: 'Ultra Boost',
-      price: 129.99,
-      color: 'White',
-    },
-    {
-      id: 3,
-      brand: 'Puma',
-      model: 'RS-X',
-      price: 79.99,
-      color: 'Red',
-    },
-    {
-      id: 4,
-      brand: 'New Balance',
-      model: '990v5',
-      price: 149.99,
-      color: 'Grey',
-    },
-  ];
+    let url = details+e.target.name
 
-  const offersData = [
-    {
-      id: 1,
-      title: 'Back to School Sale',
-      discount: '20% off on all shoes',
-      expiryDate: '2024-09-30',
-    },
-    {
-      id: 2,
-      title: 'Summer Clearance',
-      discount: 'Buy one, get one 50% off',
-      expiryDate: '2024-08-15',
-    },
-  ];
-
-  const cartData = [
-    {
-      id: 1,
-      brand: 'Reebok',
-      model: 'Classic Leather',
-      price: 69.99,
-      color: 'Blue',
-      quantity: 1,
-    },
-  ];
-
-  const wishlistData = [
-    {
-      id: 1,
-      brand: 'Vans',
-      model: 'Old Skool',
-      price: 59.99,
-      color: 'Black/White',
-    },
-    {
-      id: 2,
-      brand: 'Converse',
-      model: 'Chuck Taylor All Star',
-      price: 49.99,
-      color: 'Red',
-    },
-  ]
-  let options = {};
-
-  try {
-    setLoading(true);
-
-    // Handle different cases based on the button's name
-    switch (e.target.name) {
-      case 'shoe/shoes':
-        setResponse(shoesData);
-        setError(null);
-        break;
-      case 'offer/offers':
-        setResponse(offersData);
-        setError(null);
-        break;
-      case 'cart':
-        setResponse(cartData);
-        setError(null);
-        break;
-      case 'wishlist':
-        setResponse(wishlistData);
-        setError(null);
-        break;
-      default:
-        // Handle default case or make an actual API call if needed
-        break;
-    }
-    }
-     catch (err) {
-      setLoading(false);
-      setError(err);
-      setResponse(null);
-    } finally {
-      setLoading(false);
-    }
+    displayData.url=url
+    let options = {}
+      try {
+          setLoading(true)
+          const res = await fetch(url, options)
+          const json = await res.json()
+          setResponse(json)
+          setError(null)
+      } catch (err) {
+          setLoading(false)
+          setError(err)
+          setResponse(null)
+      }
+      finally {
+          setLoading(false)
+      }
   }
 
 
@@ -163,9 +71,14 @@ const App = () => {
         </div>
         <br/> <br/> <br/>
         <div>
-        <h2>Displayed Details:</h2>
-        <pre>{displayedDetails}</pre>
-      </div>
+          {error&&<>
+            <p>API hit through API Gateway to  <span style={{color:'blue', fontSize:'18px'}}>{displayData.url}</span></p>
+            <br/> <br/>
+            <p>--Error--</p>
+            {JSON.stringify(error)}
+            <p>Probably one of the microservice is down</p>
+          </>}
+        </div>
       </div>
     </>
   )
