@@ -4,7 +4,7 @@ metadata:
   name: tasks-deployment
 spec:
   replicas: 1
-  selector: 
+  selector:
     matchLabels:
       app: tasks
   template:
@@ -12,6 +12,10 @@ spec:
       labels:
         app: tasks
     spec:
+      volumes:
+        - name: tasks-storage
+          persistentVolumeClaim:
+            claimName: tasks-pv-claim
       containers:
         - name: tasks
           image: CONTAINER_IMAGE
@@ -19,4 +23,7 @@ spec:
             - name: AUTH_ADDRESS
               value: "auth-service.default"
             - name: TASKS_FOLDER
-              value: tasks
+              value: /tasks
+          volumeMounts:
+            - mountPath: /tasks
+              name: tasks-storage
